@@ -40,7 +40,7 @@ const char* getTestDir(char currentDir[FILENAME_MAX])
 
    //TODO: Make sure the file is a .nord file
 
-   //Concantinate the strings
+   //Concatenate the strings
    strcat(currentDir, tests);
 
    return currentDir;
@@ -53,7 +53,7 @@ void openAndPrintFile(char currentDir[FILENAME_MAX])
 
    char currentLine[100];
 
-   //Assert the that file location is not empty
+   //Assert that the file location is not empty
    assert(testFile != NULL);
 
    while (fgets(currentLine, sizeof(currentLine), testFile) != NULL)
