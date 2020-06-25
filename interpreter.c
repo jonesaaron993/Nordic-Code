@@ -4,10 +4,22 @@
    ALL CODE HERE AT THIS CURRENT DATE IS NOT PERFECT, AND CAN BE IMPROVED. */
 
 #include <stdio.h>
-#include <direct.h>
 #include <string.h>
 #include <assert.h>
-#include<stdbool.h>
+#include <stdbool.h>
+#include <stdlib.h>
+#include <ctype.h>
+#define WINDOWS
+#ifdef WINDOWS
+#include <direct.h>
+#define GetCurrentDir _getcwd
+#else
+#include <unistd.h>
+#define GetCurrentDir getcwd
+#endif
+#include "variables.h"
+
+//TODO: Get current directory on Linux
 
 //Function prototypes
 
@@ -22,6 +34,24 @@ bool StartsWith(const char *a, const char *b);
 
 //Print out the paramaters from the nord print statment
 void printFromQuotes(char *input);
+
+/*Basic diagram of how variables are stored
+
+   0    1   2   3
+0 type name = value
+1 type name = value
+2 type name = value
+3 type name = value
+
+*/
+
+//TODO: Make this a dynamic array
+//also expand on second element of multidementional array
+//so each declared variable sits in its own column
+char *output[50][50];
+
+//Variable to count how many variables have been declared
+int variableCount = 0;
 
 int main()
 {
@@ -42,7 +72,7 @@ and load in the file*/
 const char* getTestDir(char currentDir[FILENAME_MAX])
 {
    //Get the current directory
-   _getcwd( currentDir, FILENAME_MAX );
+   GetCurrentDir( currentDir, FILENAME_MAX );
 
    //The path to the test nordcode file
    char tests[] = "/tests/helloworld.nord";
@@ -82,7 +112,17 @@ void openAndPrintFile(char currentDir[FILENAME_MAX])
          char *array = currentLine;
          printFromQuotes(array);
       }
+
+      //Check if the statment is declaring a variable
+      if (StartsWith(currentLine, "var"))
+      {
+         char *array = currentLine;
+         DeclareVariable(array);
+         variableCount++;
+      }
    }
+
+   HandleVariables();
 
    //Close the file
    fclose(testFile);
@@ -101,6 +141,7 @@ bool StartsWith(const char *a, const char *b)
 of the nord print statment*/
 void printFromQuotes(char *input)
 {
+   //TODO: Make this a dynamic array
    char a[50];
    
    if(sscanf(input,"%*[^']'%[^']'",a)==1)
@@ -110,5 +151,83 @@ void printFromQuotes(char *input)
    else
    {
       printf("%s\n", a);
+   }
+}
+
+/*Breaks down a line and stores
+the corresponding values in the
+appropriate spots in the array*/
+void DeclareVariable(char *input)
+{
+
+   char delim[] = " ";
+
+   char *input2 = strdup(input);
+
+   //Get the first value between whitespace
+   char *pch = strtok(input, delim);
+
+   //Initalize the counter starting at zero
+   int counter = 0;
+
+   //Keep getting all values in between whitespaces
+   while (pch != NULL)
+   {
+      //Get the next value between whitespaces
+      pch = strtok(NULL, delim);
+
+      //Add the value to the array
+      //Don't need to add the first pch found outside of the 
+      //while loop becuase we already know it begins with 'var'
+      if (pch != NULL)
+      {
+         char *string_storage;
+
+         string_storage = malloc(strlen(pch) + 1);
+
+         if (string_storage != NULL)
+         {
+            strcpy(string_storage, pch);
+         }
+         else
+         {
+            /* Failed to allocate space to store the string - handle this
+               * error condition here. */
+         }
+         output[variableCount][counter] = string_storage;
+      }
+
+      //Increase the counter
+      counter++;
+   }
+}
+
+/*Handles all functions if a
+variable was declared*/
+void HandleVariables()
+{
+   for (int i = 0; i < variableCount; i++)
+   {
+      //Once more datatypes are created, this if statment will have to change
+      //I'm thinking of putting a switch statment here, but I'll see as the code expands
+      if (output[i][0] = "int")
+      {
+         intDataType(i);
+      }
+   }
+}
+
+/*Handles integer data type*/
+void intDataType(int index)
+{
+   //Convert the instance of the array to a character
+   char digit = *output[index][3];
+
+   //Check if the character is a digit
+   if (isdigit(digit))
+   {
+      int userInput = atoi(output[index][3]);
+
+      printf("%d\n", userInput);
    }
 }
