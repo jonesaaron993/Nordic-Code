@@ -10,4 +10,6 @@ void HandleVariables();
 //Handles integer data type
 void intDataType(int index);
 
+void printVariable(char *input);
+
 #endif // VARIABLES_H_

@@ -33,7 +33,13 @@ void openAndPrintFile(char currentDir[FILENAME_MAX]);
 bool StartsWith(const char *a, const char *b);
 
 //Print out the paramaters from the nord print statment
+bool evaluateQuotes(char *input);
+
+//Print values between quotes
 void printFromQuotes(char *input);
+
+//Get the data between parentheses
+char* getDataBetweenParentheses(char *input);
 
 /*Basic diagram of how variables are stored
 
@@ -110,7 +116,18 @@ void openAndPrintFile(char currentDir[FILENAME_MAX])
       if (StartsWith(currentLine, ".."))
       {
          char *array = currentLine;
-         printFromQuotes(array);
+
+         //Get the data between the perenthases
+         array = getDataBetweenParentheses(array);
+
+         if (evaluateQuotes(array) == true)
+         {
+            printFromQuotes(array);
+         }
+         else
+         {
+            printVariable(array);
+         }
       }
 
       //Check if the statment is declaring a variable
@@ -137,6 +154,34 @@ bool StartsWith(const char *a, const char *b)
    return 0;
 }
 
+/*Get the array between parenthases*/
+char* getDataBetweenParentheses(char *input)
+{
+   //TODO: Make this a dynamic array
+   char a[50];
+   
+   sscanf(input,"%*'(', ')'",a)==1;
+
+   return strncpy(input, a, 1);
+}
+
+/*Print the contents between quotes
+of the nord print statment*/
+bool evaluateQuotes(char *input)
+{
+   //TODO: Make this a dynamic array
+   char a[50];
+   
+   if(sscanf(input,"%*[^']'%[^']'",a) == 1)
+   {
+      return true;
+   } 
+   else
+   {
+      return false;
+   }
+}
+
 /*Print the contents between quotes
 of the nord print statment*/
 void printFromQuotes(char *input)
@@ -144,7 +189,7 @@ void printFromQuotes(char *input)
    //TODO: Make this a dynamic array
    char a[50];
    
-   if(sscanf(input,"%*[^']'%[^']'",a)==1)
+   if(sscanf(input,"%*[^']'%[^']'",a) == 1)
    {
       printf("%s\n", a);
    } 
@@ -154,15 +199,29 @@ void printFromQuotes(char *input)
    }
 }
 
+/*Print the variable by the name*/
+void printVariable(char *input)
+{
+   int size = sizeof(output) / sizeof(*output);
+
+   for (int i = 0; i < size; i++)
+   {
+      char *pointer = output[i][1];
+      
+      if(input == pointer)
+      {
+         int userInput = atoi(output[i][3]);
+         printf("%d\n", userInput);
+      } 
+   }
+}
+
 /*Breaks down a line and stores
 the corresponding values in the
 appropriate spots in the array*/
 void DeclareVariable(char *input)
 {
-
    char delim[] = " ";
-
-   char *input2 = strdup(input);
 
    //Get the first value between whitespace
    char *pch = strtok(input, delim);
@@ -189,11 +248,7 @@ void DeclareVariable(char *input)
          {
             strcpy(string_storage, pch);
          }
-         else
-         {
-            /* Failed to allocate space to store the string - handle this
-               * error condition here. */
-         }
+
          output[variableCount][counter] = string_storage;
       }
 
@@ -228,6 +283,7 @@ void intDataType(int index)
    {
       int userInput = atoi(output[index][3]);
 
-      printf("%d\n", userInput);
+      //Will sort out later
+      //printf("%d\n", userInput);
    }
 }
