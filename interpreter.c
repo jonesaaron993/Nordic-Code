@@ -1,5 +1,5 @@
-/* This is a very, very, very, basic interpreter for the nordic code base. 
-   Work to expand this code base is in the works, but it will be a while
+/* This is a very, very, very, basic interpreter for the Nordic code base. 
+   Work to expand this codebase is in the works, but it will be a while
    before this interpreter is fully operational.
    ALL CODE HERE AT THIS CURRENT DATE IS NOT PERFECT, AND CAN BE IMPROVED. */
 
@@ -32,7 +32,8 @@ void openAndPrintFile(char currentDir[FILENAME_MAX]);
 //Check if a statment starts with certain values
 bool StartsWith(const char *a, const char *b);
 
-//Print out the paramaters from the nord print statment
+//Print out the parameters from the 
+print statement
 bool evaluateQuotes(char *input);
 
 //Print values between quotes
@@ -80,14 +81,14 @@ const char* getTestDir(char currentDir[FILENAME_MAX])
    //Get the current directory
    GetCurrentDir( currentDir, FILENAME_MAX );
 
-   //The path to the test nordcode file
+   //The path to the test Nord code file
    char tests[] = "/tests/helloworld.nord";
 
    //Make sure that the file is a valid file
    //by checking its extention
    char * ext = strrchr(tests, '.');
 
-   //Assert if the extention is not a nord file
+   //Assert if the extention is not a Nord file
    assert(ext != "nord");
 
    //Concatenate the strings
@@ -145,7 +146,7 @@ void openAndPrintFile(char currentDir[FILENAME_MAX])
    fclose(testFile);
 }
 
-/*Check the begining values of the lines
+/*Check the beginning values of the lines
 if a line starts with '..' that means
 the user is trying to output to the terminal*/
 bool StartsWith(const char *a, const char *b)
@@ -166,7 +167,7 @@ char* getDataBetweenParentheses(char *input)
 }
 
 /*Print the contents between quotes
-of the nord print statment*/
+of the Nord print statement*/
 bool evaluateQuotes(char *input)
 {
    //TODO: Make this a dynamic array
@@ -183,7 +184,7 @@ bool evaluateQuotes(char *input)
 }
 
 /*Print the contents between quotes
-of the nord print statment*/
+of the Nord print statment*/
 void printFromQuotes(char *input)
 {
    //TODO: Make this a dynamic array
@@ -237,7 +238,7 @@ void DeclareVariable(char *input)
 
       //Add the value to the array
       //Don't need to add the first pch found outside of the 
-      //while loop becuase we already know it begins with 'var'
+      //while loop because we already know it begins with 'var'
       if (pch != NULL)
       {
          char *string_storage;
@@ -263,8 +264,8 @@ void HandleVariables()
 {
    for (int i = 0; i < variableCount; i++)
    {
-      //Once more datatypes are created, this if statment will have to change
-      //I'm thinking of putting a switch statment here, but I'll see as the code expands
+      //Once more data types are created, this if statement will have to change
+      //I'm thinking of putting a switch statement here, but I'll see as the code expands
       if (output[i][0] = "int")
       {
          intDataType(i);
