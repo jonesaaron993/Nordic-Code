@@ -1,5 +1,5 @@
-/* This is a very, very, very, basic interpreter for the nordic code base. 
-   Work to expand this code base is in the works, but it will be a while
+/* This is a very, very, very, basic interpreter for the Nordic code base. 
+   Work to expand this codebase is in the works, but it will be a while
    before this interpreter is fully operational.
    ALL CODE HERE AT THIS CURRENT DATE IS NOT PERFECT, AND CAN BE IMPROVED. */
 
@@ -60,14 +60,14 @@ const char* getTestDir(char currentDir[FILENAME_MAX])
    //Get the current directory
    GetCurrentDir( currentDir, FILENAME_MAX );
 
-   //The path to the test nordcode file
+   //The path to the test Nord code file
    char tests[] = "/tests/helloworld.nord";
 
    //Make sure that the file is a valid file
    //by checking its extention
    char * ext = strrchr(tests, '.');
 
-   //Assert if the extention is not a nord file
+   //Assert if the extention is not a Nord file
    assert(ext != "nord");
 
    //Concatenate the strings
@@ -132,7 +132,7 @@ void openAndPrintFile(char currentDir[FILENAME_MAX])
    fclose(testFile);
 }
 
-/*Check the begining values of the lines
+/*Check the beginning values of the lines
 if a line starts with '..' that means
 the user is trying to output to the terminal*/
 bool StartsWith(const char *a, const char *b)
@@ -155,7 +155,7 @@ char* getDataBetweenParentheses(char *input)
 }
 
 /*Print the contents between quotes
-of the nord print statment*/
+of the Nord print statement*/
 bool evaluateQuotes(char *input)
 {  
    //TODO: Make this a dynamic array
@@ -185,7 +185,7 @@ bool evaluateQuotes(char *input)
 }
 
 /*Print the contents between quotes
-of the nord print statment*/
+of the Nord print statment*/
 void printFromQuotes(char *input)
 {
    //TODO: Make this a dynamic array
