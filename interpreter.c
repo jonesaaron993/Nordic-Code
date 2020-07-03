@@ -18,6 +18,7 @@
 #define GetCurrentDir getcwd
 #endif
 #include "variables.h"
+#include "print.h"
 
 //TODO: Get current directory on Linux
 
@@ -32,30 +33,6 @@ void openAndPrintFile(char currentDir[FILENAME_MAX]);
 //Check if a statment starts with certain values
 bool StartsWith(const char *a, const char *b);
 
-//Print out the paramaters from the nord print statment
-bool evaluateQuotes(char *input);
-
-//Print values between quotes
-void printFromQuotes(char *input);
-
-//Get the data between parentheses
-char* getDataBetweenParentheses(char *input);
-
-/*Basic diagram of how variables are stored
-
-   0    1   2   3
-0 type name = value
-1 type name = value
-2 type name = value
-3 type name = value
-
-*/
-
-//TODO: Make this a dynamic array
-//also expand on second element of multidementional array
-//so each declared variable sits in its own column
-char *output[50][50];
-
 //Variable to count how many variables have been declared
 int variableCount = 0;
 
@@ -69,6 +46,9 @@ int main()
 
    //Get the number of lines
    openAndPrintFile(currentDir);
+
+   //Test allocation of int data
+   createInt(50);
 
   return 0;
 }
@@ -104,42 +84,49 @@ void openAndPrintFile(char currentDir[FILENAME_MAX])
    FILE *testFile = fopen(currentDir, "r");
 
    //TODO: Make this a dynamic array
-   char currentLine[100];
+   //char currentLine[100];
+
+   char *currentLine = NULL;
+
+   currentLine = calloc(10, sizeof(char));
 
    //Assert that the file location is not empty
    assert(testFile != NULL);
 
+   int count = 0;
+
    //TODO: Improve this while loop for counting number of lines
-   while (fgets(currentLine, sizeof(currentLine), testFile) != NULL)
+   while (fgets(currentLine, sizeof(FILENAME_MAX), testFile) != NULL)
    {
       //Check if the statment is a print statment
       if (StartsWith(currentLine, ".."))
       {
+         printf("%s\n", "Inside of the loop");
          char *array = currentLine;
 
          //Get the data between the perenthases
          array = getDataBetweenParentheses(array);
 
-         if (evaluateQuotes(array) == true)
+         if (evaluateQuotes(currentLine) == true)
          {
-            printFromQuotes(array);
-         }
-         else
-         {
-            printVariable(array);
+            printFromQuotes(currentLine);
          }
       }
 
       //Check if the statment is declaring a variable
       if (StartsWith(currentLine, "var"))
       {
-         char *array = currentLine;
-         DeclareVariable(array);
-         variableCount++;
+         printf("%s\n", "Do variable stuff here");
+         //char *array = currentLine;
+         //DeclareVariable(array);
+         //variableCount++;
       }
+
+      count++;
    }
 
-   HandleVariables();
+   //Free memory
+   free(currentLine);
 
    //Close the file
    fclose(testFile);
@@ -159,6 +146,8 @@ char* getDataBetweenParentheses(char *input)
 {
    //TODO: Make this a dynamic array
    char a[50];
+
+   printf("%s\n", "GetDataBetweenParentheses");
    
    sscanf(input,"%*'(', ')'",a)==1;
 
@@ -168,17 +157,30 @@ char* getDataBetweenParentheses(char *input)
 /*Print the contents between quotes
 of the nord print statment*/
 bool evaluateQuotes(char *input)
-{
+{  
    //TODO: Make this a dynamic array
-   char a[50];
+   char a[50] = {0};
+
+   strcpy(a, input);
+
+   printf("%s\n", "Evaluate Quotes");
+
+   char *substring;
+
+   substring = strtok(a, "'");
+   substring = strtok(NULL, "'");
    
-   if(sscanf(input,"%*[^']'%[^']'",a) == 1)
+   if(!substring)
    {
-      return true;
+      printf("%s\n", "Inside of the false evalueate quotes");
+      
+      return false;
    } 
    else
    {
-      return false;
+      printf("%s\n", "Inside of the evalueate quotes");
+
+      return true;
    }
 }
 
@@ -187,9 +189,15 @@ of the nord print statment*/
 void printFromQuotes(char *input)
 {
    //TODO: Make this a dynamic array
-   char a[50];
+   //char a[50];
+
+   char *a = NULL;
+
+   a = calloc(10, sizeof(char));
+
+   printf("%s\n", "Print from quotes");
    
-   if(sscanf(input,"%*[^']'%[^']'",a) == 1)
+   if(sscanf(input, "%*[^']'%[^']'", a) == 1)
    {
       printf("%s\n", a);
    } 
@@ -199,91 +207,12 @@ void printFromQuotes(char *input)
    }
 }
 
-/*Print the variable by the name*/
-void printVariable(char *input)
+//Plan for integer variables:
+//Allocate appropriate space using malloc
+//Verify that it is an integer
+
+/*Allocate space for an integer*/
+void *createInt(long long object)
 {
-   int size = sizeof(output) / sizeof(*output);
-
-   for (int i = 0; i < size; i++)
-   {
-      char *pointer = output[i][1];
-      
-      if(input == pointer)
-      {
-         int userInput = atoi(output[i][3]);
-         printf("%d\n", userInput);
-      } 
-   }
-}
-
-/*Breaks down a line and stores
-the corresponding values in the
-appropriate spots in the array*/
-void DeclareVariable(char *input)
-{
-   char delim[] = " ";
-
-   //Get the first value between whitespace
-   char *pch = strtok(input, delim);
-
-   //Initalize the counter starting at zero
-   int counter = 0;
-
-   //Keep getting all values in between whitespaces
-   while (pch != NULL)
-   {
-      //Get the next value between whitespaces
-      pch = strtok(NULL, delim);
-
-      //Add the value to the array
-      //Don't need to add the first pch found outside of the 
-      //while loop becuase we already know it begins with 'var'
-      if (pch != NULL)
-      {
-         char *string_storage;
-
-         string_storage = malloc(strlen(pch) + 1);
-
-         if (string_storage != NULL)
-         {
-            strcpy(string_storage, pch);
-         }
-
-         output[variableCount][counter] = string_storage;
-      }
-
-      //Increase the counter
-      counter++;
-   }
-}
-
-/*Handles all functions if a
-variable was declared*/
-void HandleVariables()
-{
-   for (int i = 0; i < variableCount; i++)
-   {
-      //Once more datatypes are created, this if statment will have to change
-      //I'm thinking of putting a switch statment here, but I'll see as the code expands
-      if (output[i][0] = "int")
-      {
-         intDataType(i);
-      }
-   }
-}
-
-/*Handles integer data type*/
-void intDataType(int index)
-{
-   //Convert the instance of the array to a character
-   char digit = *output[index][3];
-
-   //Check if the character is a digit
-   if (isdigit(digit))
-   {
-      int userInput = atoi(output[index][3]);
-
-      //Will sort out later
-      //printf("%d\n", userInput);
-   }
+   long long *p = malloc(sizeof(object));
 }
