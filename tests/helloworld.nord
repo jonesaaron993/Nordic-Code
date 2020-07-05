@@ -1,6 +1,8 @@
-..'Hello World'
-..'Test 1'
-..'Test 2'
+..('Hello World')
+..('Test 1')
+..('Test 2')
 
 var int testInt = 5
-var int testIntTwo = 6
+var int Random = 6
+
+..(testInt)

@@ -1,5 +1,5 @@
-/* This is a very, very, very, basic interpreter for the nordic code base. 
-   Work to expand this code base is in the works, but it will be a while
+/* This is a very, very, very, basic interpreter for the Nordic code base. 
+   Work to expand this codebase is in the works, but it will be a while
    before this interpreter is fully operational.
    ALL CODE HERE AT THIS CURRENT DATE IS NOT PERFECT, AND CAN BE IMPROVED. */
 
@@ -18,6 +18,7 @@
 #define GetCurrentDir getcwd
 #endif
 #include "variables.h"
+#include "print.h"
 
 //TODO: Get current directory on Linux
 
@@ -29,26 +30,8 @@ const char* getTestDir(char currentDir[FILENAME_MAX]);
 //Open a file and print all of its contents
 void openAndPrintFile(char currentDir[FILENAME_MAX]);
 
-//Check if a statment starts with certain values
+//Check if a statement starts with certain values
 bool StartsWith(const char *a, const char *b);
-
-//Print out the paramaters from the nord print statment
-void printFromQuotes(char *input);
-
-/*Basic diagram of how variables are stored
-
-   0    1   2   3
-0 type name = value
-1 type name = value
-2 type name = value
-3 type name = value
-
-*/
-
-//TODO: Make this a dynamic array
-//also expand on second element of multidementional array
-//so each declared variable sits in its own column
-char *output[50][50];
 
 //Variable to count how many variables have been declared
 int variableCount = 0;
@@ -64,6 +47,9 @@ int main()
    //Get the number of lines
    openAndPrintFile(currentDir);
 
+   //Test allocation of int data
+   createInt(50);
+
   return 0;
 }
 
@@ -74,14 +60,14 @@ const char* getTestDir(char currentDir[FILENAME_MAX])
    //Get the current directory
    GetCurrentDir( currentDir, FILENAME_MAX );
 
-   //The path to the test nordcode file
+   //The path to the test Nord code file
    char tests[] = "/tests/helloworld.nord";
 
    //Make sure that the file is a valid file
    //by checking its extention
    char * ext = strrchr(tests, '.');
 
-   //Assert if the extention is not a nord file
+   //Assert if the extention is not a Nord file
    assert(ext != "nord");
 
    //Concatenate the strings
@@ -106,45 +92,82 @@ void openAndPrintFile(char currentDir[FILENAME_MAX])
    //TODO: Improve this while loop for counting number of lines
    while (fgets(currentLine, sizeof(currentLine), testFile) != NULL)
    {
-      //Check if the statment is a print statment
+      //Check if the statement is a print statement
       if (StartsWith(currentLine, ".."))
       {
          char *array = currentLine;
-         printFromQuotes(array);
+
+         //Get the data between the parentheses  
+         array = getDataBetweenParentheses(array);
+
+         if (evaluateQuotes(currentLine) == true)
+         {
+            printFromQuotes(currentLine);
+         }
       }
 
-      //Check if the statment is declaring a variable
+      //Check if the statement is declaring a variable
       if (StartsWith(currentLine, "var"))
       {
-         char *array = currentLine;
-         DeclareVariable(array);
-         variableCount++;
+         //char *array = currentLine;
+         //DeclareVariable(array);
+         //variableCount++;
       }
    }
 
-   HandleVariables();
+   //Free memory
+   free(currentLine);
 
    //Close the file
    fclose(testFile);
 }
 
-/*Check the begining values of the lines
-if a line starts with '..' that means
-the user is trying to output to the terminal*/
+/*Check the beginning values of the line 
+starts with a certain value*/
 bool StartsWith(const char *a, const char *b)
 {
    if(strncmp(a, b, strlen(b)) == 0) return 1;
    return 0;
 }
 
-/*Print the contents between quotes
-of the nord print statment*/
-void printFromQuotes(char *input)
+/*Get the array between parentheses*/
+char* getDataBetweenParentheses(char *input)
 {
    //TODO: Make this a dynamic array
-   char a[50];
+   char a[100];
+
+   sscanf(input,"%*'(', ')'",a)==1;
+
+   return strncpy(input, a, 1);
+}
+
+/*Print the contents between quotes
+of the Nord print statement*/
+bool evaluateQuotes(char *input)
+{  
+   //Create a dynamic array
+   char *a = NULL;
+   a = calloc(10, sizeof(char));
    
-   if(sscanf(input,"%*[^']'%[^']'",a)==1)
+   if(sscanf(input, "%*[^']'%[^']'", a) == 1)
+   {
+      return true;
+   } 
+   else
+   {
+      return false;
+   }
+}
+
+/*Print the contents between quotes
+of the Nord print statement*/
+void printFromQuotes(char *input)
+{
+   //Create a dynamic array
+   char *a = NULL;
+   a = calloc(10, sizeof(char));
+   
+   if(sscanf(input, "%*[^']'%[^']'", a) == 1)
    {
       printf("%s\n", a);
    } 
@@ -154,80 +177,12 @@ void printFromQuotes(char *input)
    }
 }
 
-/*Breaks down a line and stores
-the corresponding values in the
-appropriate spots in the array*/
-void DeclareVariable(char *input)
+//Plan for integer variables:
+//Allocate appropriate space using malloc
+//Verify that it is an integer
+
+/*Allocate space for an integer*/
+void *createInt(long long object)
 {
-
-   char delim[] = " ";
-
-   char *input2 = strdup(input);
-
-   //Get the first value between whitespace
-   char *pch = strtok(input, delim);
-
-   //Initalize the counter starting at zero
-   int counter = 0;
-
-   //Keep getting all values in between whitespaces
-   while (pch != NULL)
-   {
-      //Get the next value between whitespaces
-      pch = strtok(NULL, delim);
-
-      //Add the value to the array
-      //Don't need to add the first pch found outside of the 
-      //while loop becuase we already know it begins with 'var'
-      if (pch != NULL)
-      {
-         char *string_storage;
-
-         string_storage = malloc(strlen(pch) + 1);
-
-         if (string_storage != NULL)
-         {
-            strcpy(string_storage, pch);
-         }
-         else
-         {
-            /* Failed to allocate space to store the string - handle this
-               * error condition here. */
-         }
-         output[variableCount][counter] = string_storage;
-      }
-
-      //Increase the counter
-      counter++;
-   }
-}
-
-/*Handles all functions if a
-variable was declared*/
-void HandleVariables()
-{
-   for (int i = 0; i < variableCount; i++)
-   {
-      //Once more datatypes are created, this if statment will have to change
-      //I'm thinking of putting a switch statment here, but I'll see as the code expands
-      if (output[i][0] = "int")
-      {
-         intDataType(i);
-      }
-   }
-}
-
-/*Handles integer data type*/
-void intDataType(int index)
-{
-   //Convert the instance of the array to a character
-   char digit = *output[index][3];
-
-   //Check if the character is a digit
-   if (isdigit(digit))
-   {
-      int userInput = atoi(output[index][3]);
-
-      printf("%d\n", userInput);
-   }
+   long long *p = malloc(sizeof(object));
 }
