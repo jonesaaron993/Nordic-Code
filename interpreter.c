@@ -30,7 +30,7 @@ const char* getTestDir(char currentDir[FILENAME_MAX]);
 //Open a file and print all of its contents
 void openAndPrintFile(char currentDir[FILENAME_MAX]);
 
-//Check if a statment starts with certain values
+//Check if a statement starts with certain values
 bool StartsWith(const char *a, const char *b);
 
 //Variable to count how many variables have been declared
@@ -98,13 +98,13 @@ void openAndPrintFile(char currentDir[FILENAME_MAX])
    //TODO: Improve this while loop for counting number of lines
    while (fgets(currentLine, sizeof(FILENAME_MAX), testFile) != NULL)
    {
-      //Check if the statment is a print statment
+      //Check if the statement is a print statement
       if (StartsWith(currentLine, ".."))
       {
          printf("%s\n", "Inside of the loop");
          char *array = currentLine;
 
-         //Get the data between the perenthases
+         //Get the data between the parentheses  
          array = getDataBetweenParentheses(array);
 
          if (evaluateQuotes(currentLine) == true)
@@ -113,7 +113,7 @@ void openAndPrintFile(char currentDir[FILENAME_MAX])
          }
       }
 
-      //Check if the statment is declaring a variable
+      //Check if the statement is declaring a variable
       if (StartsWith(currentLine, "var"))
       {
          printf("%s\n", "Do variable stuff here");
@@ -141,7 +141,7 @@ bool StartsWith(const char *a, const char *b)
    return 0;
 }
 
-/*Get the array between parenthases*/
+/*Get the array between parentheses*/
 char* getDataBetweenParentheses(char *input)
 {
    //TODO: Make this a dynamic array
@@ -172,20 +172,20 @@ bool evaluateQuotes(char *input)
    
    if(!substring)
    {
-      printf("%s\n", "Inside of the false evalueate quotes");
+      printf("%s\n", "Inside of the false evaluate quotes");
       
       return false;
    } 
    else
    {
-      printf("%s\n", "Inside of the evalueate quotes");
+      printf("%s\n", "Inside of the evaluate quotes");
 
       return true;
    }
 }
 
 /*Print the contents between quotes
-of the Nord print statment*/
+of the Nord print statement*/
 void printFromQuotes(char *input)
 {
    //TODO: Make this a dynamic array
