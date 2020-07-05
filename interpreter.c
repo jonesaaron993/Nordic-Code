@@ -84,24 +84,17 @@ void openAndPrintFile(char currentDir[FILENAME_MAX])
    FILE *testFile = fopen(currentDir, "r");
 
    //TODO: Make this a dynamic array
-   //char currentLine[100];
-
-   char *currentLine = NULL;
-
-   currentLine = calloc(10, sizeof(char));
+   char currentLine[100];
 
    //Assert that the file location is not empty
    assert(testFile != NULL);
 
-   int count = 0;
-
    //TODO: Improve this while loop for counting number of lines
-   while (fgets(currentLine, sizeof(FILENAME_MAX), testFile) != NULL)
+   while (fgets(currentLine, sizeof(currentLine), testFile) != NULL)
    {
       //Check if the statement is a print statement
       if (StartsWith(currentLine, ".."))
       {
-         printf("%s\n", "Inside of the loop");
          char *array = currentLine;
 
          //Get the data between the parentheses  
@@ -116,13 +109,10 @@ void openAndPrintFile(char currentDir[FILENAME_MAX])
       //Check if the statement is declaring a variable
       if (StartsWith(currentLine, "var"))
       {
-         printf("%s\n", "Do variable stuff here");
          //char *array = currentLine;
          //DeclareVariable(array);
          //variableCount++;
       }
-
-      count++;
    }
 
    //Free memory
@@ -132,9 +122,8 @@ void openAndPrintFile(char currentDir[FILENAME_MAX])
    fclose(testFile);
 }
 
-/*Check the beginning values of the lines
-if a line starts with '..' that means
-the user is trying to output to the terminal*/
+/*Check the beginning values of the line 
+starts with a certain value*/
 bool StartsWith(const char *a, const char *b)
 {
    if(strncmp(a, b, strlen(b)) == 0) return 1;
@@ -145,10 +134,8 @@ bool StartsWith(const char *a, const char *b)
 char* getDataBetweenParentheses(char *input)
 {
    //TODO: Make this a dynamic array
-   char a[50];
+   char a[100];
 
-   printf("%s\n", "GetDataBetweenParentheses");
-   
    sscanf(input,"%*'(', ')'",a)==1;
 
    return strncpy(input, a, 1);
@@ -158,29 +145,17 @@ char* getDataBetweenParentheses(char *input)
 of the Nord print statement*/
 bool evaluateQuotes(char *input)
 {  
-   //TODO: Make this a dynamic array
-   char a[50] = {0};
-
-   strcpy(a, input);
-
-   printf("%s\n", "Evaluate Quotes");
-
-   char *substring;
-
-   substring = strtok(a, "'");
-   substring = strtok(NULL, "'");
+   //Create a dynamic array
+   char *a = NULL;
+   a = calloc(10, sizeof(char));
    
-   if(!substring)
+   if(sscanf(input, "%*[^']'%[^']'", a) == 1)
    {
-      printf("%s\n", "Inside of the false evaluate quotes");
-      
-      return false;
+      return true;
    } 
    else
    {
-      printf("%s\n", "Inside of the evaluate quotes");
-
-      return true;
+      return false;
    }
 }
 
@@ -188,14 +163,9 @@ bool evaluateQuotes(char *input)
 of the Nord print statement*/
 void printFromQuotes(char *input)
 {
-   //TODO: Make this a dynamic array
-   //char a[50];
-
+   //Create a dynamic array
    char *a = NULL;
-
    a = calloc(10, sizeof(char));
-
-   printf("%s\n", "Print from quotes");
    
    if(sscanf(input, "%*[^']'%[^']'", a) == 1)
    {
