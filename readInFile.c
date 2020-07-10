@@ -19,10 +19,10 @@ const char* getTestDir(char currentDir[FILENAME_MAX])
    char tests[] = "/tests/helloworld.nord";
 
    //Make sure that the file is a valid file
-   //by checking its extention
+   //by checking its extension
    char * ext = strrchr(tests, '.');
 
-   //Assert if the extention is not a Nord file
+   //Assert if the extension is not a Nord file
    assert(ext != "nord");
 
    //Concatenate the strings
